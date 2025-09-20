@@ -51,6 +51,7 @@ export default function RootLayout({ children }) {
         <div className="min-h-screen flex flex-col p-4 bg-white font-sans">
           {/* Header */}
           <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 bg-white border-b shadow-md border-gray-200 mb-5">
+
             <div>
               <h1 className="text-xl font-bold text-black">
 
