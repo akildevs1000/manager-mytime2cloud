@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation"; // <-- hook to get current path
 import "./globals.css";
 import { useState } from "react";
+import { CompanyProvider } from "@/context/CompanyContext";
 
 // Initialize fonts
 const geistSans = Geist({
@@ -97,7 +98,9 @@ export default function RootLayout({ children }) {
               </div>
             </div>
           </header>
-          <div className="mt-18">{children}</div>
+
+
+          <div className="mt-18"><CompanyProvider>{children}</CompanyProvider></div>
         </div>
 
         {/* Footer */}
