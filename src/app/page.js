@@ -12,7 +12,7 @@ export default function Page() {
   return (
     <>
       {/* Branch Selector */}
-      <div className="mt-20">
+      <div className="mb-5">
         <Select >
           <SelectTrigger className="w-full py-5">
             <SelectValue placeholder="Select Branch" />
@@ -23,12 +23,6 @@ export default function Page() {
             <SelectItem value="b">Branch B</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-
-      {/* Total Employees */}
-      <div className="mb-6 flex justify-between items-center rounded-lg rounded-lg shadow-md p-3 mt-5">
-        <p className="text-1xl  text-gray-500">Total Employees</p>
-        <p className="text-1xl font-bold text-indigo-600">501</p>
       </div>
 
       {/* Stats Grid */}
