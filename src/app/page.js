@@ -105,20 +105,19 @@ export default function Page() {
     setOpen(false);
   };
 
-  useEffect(() => {
+  const fetchLogs = async () => {
     if (!companyId) return;
+    try {
+      const { data } = await getLogs(companyId, page); // use page here
+      setLogs(data);
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    }
+  };
 
-    const fetchLogs = async () => {
-      try {
-        const { data } = await getLogs(companyId, page); // use page here
-        setLogs(data);
-      } catch (error) {
-        console.error("Error fetching logs:", error);
-      }
-    };
-
+  useEffect(() => {
     fetchLogs();
-  }, [companyId, page]); // fetch again when page changes
+  }, [companyId, page]);
 
   // Always call hooks first, then conditionally render
 
@@ -183,9 +182,15 @@ export default function Page() {
 
       <StatsGrid stats={stats} />
 
-
       <section>
-        <h2 className="text-lg font-bold my-5">Live Logs</h2>
+        <div className="flex items-center justify-between my-5">
+          <h2 className="text-lg font-bold">Live Logs</h2>
+          <button onClick={fetchLogs} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-card-hover-dark transition-colors duration-200">
+            <span className="material-icons text-gray-500 dark:text-gray-400">
+              refresh
+            </span>
+          </button>
+        </div>
         <div className="space-y-3">
           {logs.map((log, index) => (
             <div key={index}
