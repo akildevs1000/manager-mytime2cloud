@@ -17,24 +17,26 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 
 
-
 import { getBranches, getAttendnaceCount, getLogs } from "@/lib/api";
 import { Suspense, useEffect, useState } from "react";
 import StatsGrid from "@/components/StatsGrid";
 import { useCompany } from "@/context/CompanyContext";
 
-export default function PageWrapper() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Page />
-    </Suspense>
-  );
-}
-
-function Page() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export default function Page() {
   const { companyId, setCompanyId } = useCompany();
+
+  // Fetch companyId from local storage with a delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const storedCompanyId = localStorage.getItem('company_id');
+      console.log("🚀 ~ Page ~ storedCompanyId:", storedCompanyId)
+      if (storedCompanyId && companyId != storedCompanyId) {
+        setCompanyId(storedCompanyId);
+      }
+    }, 1000); // Wait for 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup function to prevent memory leaks
+  }, []);
 
   const [branches, setBranches] = useState([]);
   const [stats, setStats] = useState({
@@ -48,13 +50,6 @@ function Page() {
   const [open, setOpen] = useState(false);
   const [logs, setLogs] = useState([]);
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    const id = searchParams.get("company_id");
-    if (id && id !== companyId) {
-      setCompanyId(id);
-    }
-  }, [searchParams, companyId, setCompanyId]);
 
   // Fetch branches
   useEffect(() => {
@@ -115,6 +110,8 @@ function Page() {
 
   // Always call hooks first, then conditionally render
   if (!companyId) {
+    console.log("🚀 ~ Page ~ companyId:", companyId)
+
     return <div className="text-center">Loading....</div>;
   }
 
@@ -196,7 +193,7 @@ function Page() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="font-medium text-sm">{log.time}</p>
+                <p className="text-green-600 font-medium text-sm">{log.time}</p>
                 <p className="text-xs text-gray-500">
                   {log.date}
                 </p>

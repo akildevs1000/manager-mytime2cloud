@@ -1,6 +1,24 @@
-export default function AttendanceReports() {
-  
-  const employees = [
+"use client";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
+
+import { getBranches, getEmployeeList } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { useCompany } from "@/context/CompanyContext";
+
+const employees = [
   {
     name: "Hanna Rony",
     empId: "2003",
@@ -88,6 +106,27 @@ export default function AttendanceReports() {
   },
 ];
 
+export default function AttendanceReports() {
+
+  const { companyId } = useCompany();
+
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [branches, setBranches] = useState([]);
+
+  // Fetch branches
+  useEffect(() => {
+    if (!companyId) return;
+    const fetchBranches = async () => {
+      try {
+        const data = await getBranches(companyId);
+        setBranches(data);
+      } catch (error) {
+        console.error("Error fetching branches:", error);
+      }
+    };
+    fetchBranches();
+  }, [companyId]);
 
   // status colors
   const statusStyles = {
@@ -97,9 +136,65 @@ export default function AttendanceReports() {
     "Half Day": { bg: "#E0F2FE", color: "#075985" },
   };
 
+  const handleSelectBranch = (currentValue) => {
+    if (currentValue === "Select All") {
+      setSelectedBranch(null);
+    } else {
+      const selectedBranchItem = branches.find((b) => b.name === currentValue);
+      if (selectedBranchItem) {
+        setSelectedBranch(
+          selectedBranchItem.id === selectedBranch ? null : selectedBranchItem.id
+        );
+      }
+    }
+    setOpen(false);
+  };
+
+  // Always call hooks first, then conditionally render
+  if (!companyId) {
+    return <div className="text-center">Unauthenticated</div>;
+  }
+
   return (
     <div className="mb-4">
       <h2 className="text-2xl font-bold">Attendance Reports</h2>
+
+
+      <div className="my-3">
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="w-full justify-between py-5 text-gray-500"
+            >
+              {selectedBranch
+                ? branches.find((b) => b.id === selectedBranch)?.name
+                : "Select Branch"}
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent className="w-[320px] p-0">
+            <Command>
+              <CommandInput placeholder="Search branch..." />
+              <CommandEmpty>No branch found.</CommandEmpty>
+              <CommandGroup>
+                {branches.map((branch) => (
+                  <CommandItem
+                    className="text-gray-500"
+                    key={branch.id}
+                    value={branch.name}
+                    onSelect={handleSelectBranch}
+                  >
+                    {branch.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
 
       {/* Reports */}
       <div className="mt-6 space-y-4">
@@ -149,7 +244,6 @@ export default function AttendanceReports() {
                 <p>{emp.shift}</p>
               </div>
 
-              {/* logs Loop */}
               {emp.logs.length > 0 ? (
                 emp.logs.map((punch, idx) => (
                   <div key={idx} className="col-span-2 grid grid-cols-2 gap-4">

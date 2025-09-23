@@ -45,9 +45,14 @@
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
 }
-
 body {
-  font-family: "Roboto", Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  min-height: max(884px, 100dvh);
+  background: #f6f7f8 !important;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
 .material-icons {
