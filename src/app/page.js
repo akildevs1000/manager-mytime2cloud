@@ -21,9 +21,21 @@ import { getBranches, getAttendnaceCount, getLogs } from "@/lib/api";
 import { Suspense, useEffect, useState } from "react";
 import StatsGrid from "@/components/StatsGrid";
 import { useCompany } from "@/context/CompanyContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Page() {
   const { companyId, setCompanyId } = useCompany();
+
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
+
 
   // Fetch companyId from local storage with a delay
   useEffect(() => {
@@ -109,11 +121,15 @@ export default function Page() {
   }, [companyId, page]); // fetch again when page changes
 
   // Always call hooks first, then conditionally render
-  if (!companyId) {
-    console.log("🚀 ~ Page ~ companyId:", companyId)
 
-    return <div className="text-center">Loading....</div>;
+  if (loading) {
+    return <div>Loading...</div>;
   }
+
+  if (!user) {
+    return null;
+  }
+
 
   return (
     <>

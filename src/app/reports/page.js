@@ -13,106 +13,30 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 
 import { getBranches, getEmployeeList } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useCompany } from "@/context/CompanyContext";
 
-const employees = [
-  {
-    name: "Hanna Rony",
-    empId: "2003",
-    avatar:
-      "https://randomuser.me/api/portraits/women/44.jpg",
-    status: "Present",
-    date: "23 Sep 23",
-    day: "Friday",
-    shift: "09:00 - 03:30",
-    logs: [
-      { in: "08:49", out: "13:22" },
-      { in: "13:53", out: "17:59" },
-    ],
-    total: "08:39",
-  },
-  {
-    name: "Remesh Ram",
-    empId: "2000",
-    avatar:
-      "https://randomuser.me/api/portraits/men/32.jpg",
-    status: "Absent",
-    date: "23 Sep 23",
-    day: "Friday",
-    shift: "09:00 - 03:30",
-    logs: [], // no logs for absent
-    total: "00:00",
-  },
-  {
-    name: "Sophia Khan",
-    empId: "2005",
-    avatar:
-      "https://randomuser.me/api/portraits/women/68.jpg",
-    status: "Late",
-    date: "23 Sep 23",
-    day: "Friday",
-    shift: "09:00 - 03:30",
-    logs: [
-      { in: "09:45", out: "13:30" },
-      { in: "14:00", out: "18:10" },
-    ],
-    total: "07:55",
-  },
-  {
-    name: "Ali Haider",
-    empId: "2007",
-    avatar:
-      "https://randomuser.me/api/portraits/men/11.jpg",
-    status: "Half Day",
-    date: "23 Sep 23",
-    day: "Friday",
-    shift: "09:00 - 03:30",
-    logs: [{ in: "09:05", out: "13:00" }],
-    total: "03:55",
-  },
-  {
-    name: "Emma Watson",
-    empId: "2008",
-    avatar:
-      "https://randomuser.me/api/portraits/women/12.jpg",
-    status: "Present",
-    date: "23 Sep 23",
-    day: "Friday",
-    shift: "09:00 - 03:30",
-    logs: [
-      { in: "08:58", out: "12:55" },
-      { in: "13:40", out: "17:45" },
-    ],
-    total: "08:02",
-  },
-  {
-    name: "David John",
-    empId: "2010",
-    avatar:
-      "https://randomuser.me/api/portraits/men/41.jpg",
-    status: "Present",
-    date: "23 Sep 23",
-    day: "Friday",
-    shift: "09:00 - 03:30",
-    logs: [
-      { in: "08:40", out: "12:30" },
-      { in: "13:10", out: "16:55" },
-      { in: "17:05", out: "19:00" },
-    ],
-    total: "09:35",
-  },
-];
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+
 
 export default function AttendanceReports() {
+
+  const attendances = [];
 
   const { companyId } = useCompany();
 
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [open, setOpen] = useState(false);
   const [branches, setBranches] = useState([]);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [fromDatePopoverOpen, setFromDatePopoverOpen] = useState(false); // New state for From Date popover
+  const [toDatePopoverOpen, setToDatePopoverOpen] = useState(false); // New state for To Date popover
 
   // Fetch branches
   useEffect(() => {
@@ -159,46 +83,106 @@ export default function AttendanceReports() {
     <div className="mb-4">
       <h2 className="text-2xl font-bold">Attendance Reports</h2>
 
+      <div className="my-3 flex flex-col md:flex-row gap-3">
+        {/* Branch Popover */}
+        <div className="w-full md:w-1/3">
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-full justify-between py-5 text-gray-500"
+              >
+                {selectedBranch
+                  ? branches.find((b) => b.id === selectedBranch)?.name
+                  : "Select Branch"}
+              </Button>
+            </PopoverTrigger>
 
-      <div className="my-3">
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="w-full justify-between py-5 text-gray-500"
-            >
-              {selectedBranch
-                ? branches.find((b) => b.id === selectedBranch)?.name
-                : "Select Branch"}
-            </Button>
-          </PopoverTrigger>
+            <PopoverContent className="w-[320px] p-0">
+              <Command>
+                <CommandInput placeholder="Search branch..." />
+                <CommandEmpty>No branch found.</CommandEmpty>
+                <CommandGroup>
+                  {branches.map((branch) => (
+                    <CommandItem
+                      className="text-gray-500"
+                      key={branch.id}
+                      value={branch.name}
+                      onSelect={handleSelectBranch}
+                    >
+                      {branch.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
 
-          <PopoverContent className="w-[320px] p-0">
-            <Command>
-              <CommandInput placeholder="Search branch..." />
-              <CommandEmpty>No branch found.</CommandEmpty>
-              <CommandGroup>
-                {branches.map((branch) => (
-                  <CommandItem
-                    className="text-gray-500"
-                    key={branch.id}
-                    value={branch.name}
-                    onSelect={handleSelectBranch}
-                  >
-                    {branch.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
+        {/* From Date Picker */}
+        <div className="w-full md:w-1/3">
+          <Popover open={fromDatePopoverOpen} onOpenChange={setFromDatePopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal py-5 text-gray-500",
+                  !fromDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {fromDate ? format(fromDate, "LLL dd, y") : <span>From Date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={fromDate}
+                onSelect={(date) => {
+                  setFromDate(date);
+                  setFromDatePopoverOpen(false); // Close popover
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* To Date Picker */}
+        <div className="w-full md:w-1/3">
+          <Popover open={toDatePopoverOpen} onOpenChange={setToDatePopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal py-5 text-gray-500",
+                  !toDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {toDate ? format(toDate, "LLL dd, y") : <span>To Date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={toDate}
+                onSelect={(date) => {
+                  setToDate(date);
+                  setToDatePopoverOpen(false); // Close popover
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       {/* Reports */}
       <div className="mt-6 space-y-4">
-        {employees.map((emp, index) => (
+        {attendances.map((emp, index) => (
           <div
             key={index}
             className="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow"
