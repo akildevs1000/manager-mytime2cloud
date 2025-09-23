@@ -61,6 +61,13 @@ export const getEmployeeList = async (company_id = 0, branch_id = 0) => {
 };
 
 
+// companyId will be passed dynamically
+export const getAttendanceReports = async (payload = {}) => {
+  const { data } = await axios.post(`${API_BASE}/attendance-report-new`,payload);
+  return data;
+};
+
+
 export const api = axios.create({
   baseURL: API_BASE,
   headers: {

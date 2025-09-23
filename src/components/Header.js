@@ -48,7 +48,7 @@ export default function Header() {
                     {open && (
                         <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg z-50 bg-white">
                             <ul className="py-2">
-                                <li>
+                                {/* <li>
                                     <button className="w-full text-left px-4 py-2 text-sm text-gray-500 ">
                                         Profile
                                     </button>
@@ -57,7 +57,7 @@ export default function Header() {
                                     <button className="w-full text-left px-4 py-2 text-sm text-gray-500">
                                         Settings
                                     </button>
-                                </li>
+                                </li> */}
                                 <li>
                                     <button onClick={() => handleLogout()} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-black-500">
                                         Logout
