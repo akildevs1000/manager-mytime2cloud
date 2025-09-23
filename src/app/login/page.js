@@ -19,9 +19,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     // Redirect if the user is already authenticated
-    if (!loading && user) {
-      router.push("/");
-    }
+    // if (!loading && user) {
+    //   router.push("/");
+    // }
 
     // Load the remembered email from local storage on initial render
     const rememberedEmail = localStorage.getItem("rememberedEmail");
@@ -45,9 +45,9 @@ export default function LoginPage() {
     }
   };
 
-  if (loading || user) {
-    return <div>Redirecting...</div>;
-  }
+  // if (loading || user) {
+  //   return null;
+  // }
 
   return (
     <div className="flex items-center justify-center min-h-[75vh]">

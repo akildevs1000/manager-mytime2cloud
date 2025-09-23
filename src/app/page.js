@@ -123,7 +123,7 @@ export default function Page() {
 
   useEffect(() => {
     fetchLogs();
-  }, [companyId, page]);
+  }, [companyId, page, selectedBranch]);
 
   // Always call hooks first, then conditionally render
 
