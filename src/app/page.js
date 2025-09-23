@@ -24,6 +24,9 @@ import { useCompany } from "@/context/CompanyContext";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Page() {
+
+  const [isLogsLoading, setIsLogsLoading] = useState(false);
+
   const { companyId, setCompanyId } = useCompany();
 
   const { user, loading } = useAuth();
@@ -107,11 +110,14 @@ export default function Page() {
 
   const fetchLogs = async () => {
     if (!companyId) return;
+    setIsLogsLoading(true); // Start loading
     try {
-      const { data } = await getLogs(companyId, page); // use page here
+      const { data } = await getLogs(companyId, page);
       setLogs(data);
     } catch (error) {
       console.error("Error fetching logs:", error);
+    } finally {
+      setIsLogsLoading(false); // End loading
     }
   };
 
@@ -185,10 +191,20 @@ export default function Page() {
       <section>
         <div className="flex items-center justify-between my-5">
           <h2 className="text-lg font-bold">Live Logs</h2>
-          <button onClick={fetchLogs} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-card-hover-dark transition-colors duration-200">
-            <span className="material-icons text-gray-500 dark:text-gray-400">
-              refresh
-            </span>
+          <button
+            onClick={fetchLogs}
+            disabled={isLogsLoading}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-card-hover-dark transition-colors duration-200"
+          >
+            {isLogsLoading ? (
+              <span className="material-icons text-green-600 dark:text-gray-400 animate-spin">
+                sync
+              </span>
+            ) : (
+              <span className="material-icons text-green-600 dark:text-gray-400">
+                refresh
+              </span>
+            )}
           </button>
         </div>
         <div className="space-y-3">
