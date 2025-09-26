@@ -42,14 +42,14 @@ export default function LiveEmployeeLogs() {
 
     return (
         <>
-            <div className="bg-white p-4 rounded-lg shadow-md mb-6 flex justify-between items-center">
+            <div className="bg-white p-4 rounded-lg  flex justify-between items-center mt-0 mb-5">
                 <p className="text-1xl font-medium text-gray-500">Total Logs</p>
                 <p className="text-1xl font-bold text-indigo-600">{logsCount || 0}</p>
             </div>
 
             <div>
                 {logs.map((log, index) => (
-                    <div key={index} className="bg-card-light dark:bg-card-dark rounded-lg shadow p-4 space-y-4">
+                    <div key={index} className="bg-white dark:bg-card-dark rounded-lg p-4 space-y-4">
                         <div className="flex items-center space-x-3">
                             <img
                                 alt={log?.employee?.full_name}
@@ -59,7 +59,7 @@ export default function LiveEmployeeLogs() {
                                     // 'https://lh3.googleusercontent.com/aida-public/AB6AXuBaC2gcwDY0mzgyIjjqALcls2KjjWNR8LPN5xvbr4zzNPRzaG9pDZy_iEdeYFYOeOISgsze_BRmzu1RtXTuL3efEqXU7nAfZPSU2LaAK9Ff9qPC42kTstmhp7QRfSBmauqlAUwSJKOfbHcF8QPXPHTM08pakvME7E-91XNPqxznhb60y7_58DhTJEooIqqs_mhq94B3T-PbbL_bQT5vQ9mYnziHXqf4WvG4stIWyrVO3G47Sed90Vs2vZa8BHjqIor97MS_3nhDzds'
                                     `https://ui-avatars.com/api/?name=${encodeURIComponent(
                                         log?.employee?.first_name == "---" ? "??" : log?.employee?.first_name
-                                    )}&background=4F46E5&color=fff&size=120`
+                                    )}&background=8A2BE2&color=fff&size=120`
                                 }
                             />
                             <div>
@@ -99,7 +99,7 @@ export default function LiveEmployeeLogs() {
 
                 <button
                     onClick={() => setPage(prev => prev + 1)}
-                    className="px-2 py-1 bg-indigo-600 text-white rounded"
+                    className="px-2 py-1 bg-[#8A2BE2] text-white rounded"
                 >
                     Next
                 </button>

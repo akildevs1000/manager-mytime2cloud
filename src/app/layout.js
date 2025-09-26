@@ -1,9 +1,13 @@
+"use client";
+
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 import { CompanyProvider } from "@/context/CompanyContext";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 // Initialize fonts
 const geistSans = Geist({
@@ -29,6 +33,20 @@ const roboto = Roboto({
 
 export default function RootLayout({ children }) {
 
+  const router = useRouter();
+
+  useEffect(() => {
+    // Select body element
+    const body = document.body;
+
+    // Set background based on route
+    if (router.pathname === '/login') {
+      body.style.backgroundColor = '#ffffff'; // white
+    } else {
+      body.style.backgroundColor = '#e9e9e9'; // default
+    }
+  }, [router.pathname]);
+
   return (
     <html lang="en">
 
@@ -47,6 +65,10 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Your App Name" />
+
+        {/* Status bar color */}
+        <meta name="theme-color" content="#8A2BE2" />           {/* Android */}
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /> {/* iOS */}
 
         {/* Apple Touch Icon - used for "Add to Home Screen" */}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -67,12 +89,17 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable}`}>
+        {/* Purple top bar for iOS status bar */}
+        <div className="fixed top-0 left-0 w-full h-[env(safe-area-inset-top)] bg-[#8A2BE2] z-50"></div>
+
         <AuthProvider>
-          <div className="min-h-screen flex flex-col p-4  font-sans">
-            {<Header />}
-            <div className="mt-18"><CompanyProvider>{children}</CompanyProvider></div>
+          <div className="min-h-screen flex flex-col p-4 font-sans">
+            <Header />
+            <div className="mt-18">
+              <CompanyProvider>{children}</CompanyProvider>
+            </div>
           </div>
-          {<Footer />}
+          <Footer />
         </AuthProvider>
       </body>
     </html>

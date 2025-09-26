@@ -123,7 +123,7 @@ export default function AttendanceReports() {
   }
 
   return (
-    <div className="mb-4">
+    <div className="mb-4  p-4">
       {/* <h2 className="text-2xl font-bold">Attendance Reports</h2> */}
       <div className="my-3 flex flex-col md:flex-row gap-3">
         {/* Branch Popover */}

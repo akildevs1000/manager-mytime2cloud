@@ -220,7 +220,7 @@ export default function Page() {
                   // 'https://lh3.googleusercontent.com/aida-public/AB6AXuBaC2gcwDY0mzgyIjjqALcls2KjjWNR8LPN5xvbr4zzNPRzaG9pDZy_iEdeYFYOeOISgsze_BRmzu1RtXTuL3efEqXU7nAfZPSU2LaAK9Ff9qPC42kTstmhp7QRfSBmauqlAUwSJKOfbHcF8QPXPHTM08pakvME7E-91XNPqxznhb60y7_58DhTJEooIqqs_mhq94B3T-PbbL_bQT5vQ9mYnziHXqf4WvG4stIWyrVO3G47Sed90Vs2vZa8BHjqIor97MS_3nhDzds'
                   `https://ui-avatars.com/api/?name=${encodeURIComponent(
                     log?.employee?.first_name == "---" ? "??" : log?.employee?.first_name
-                  )}&background=4F46E5&color=fff&size=120`
+                  )}&background=8A2BE2&color=fff&size=120`
                 }
               />
               <div className="flex-1">

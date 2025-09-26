@@ -36,7 +36,7 @@ export default function Page() {
       <div id="employee-list">
         <div>
           {employees.map((e, index) => (
-            <div key={index} className="bg-card-light dark:bg-card-dark rounded-lg p-4 mb-4 shadow-sm">
+            <div key={index} className="bg-white dark:bg-card-dark rounded-lg p-4 mb-4">
               <div className="flex items-center">
                 <img alt="Abdrahman Kassim avatar" className="w-12 h-12 rounded-full mr-4"
                   src={
@@ -44,7 +44,7 @@ export default function Page() {
                     // 'https://lh3.googleusercontent.com/aida-public/AB6AXuBaC2gcwDY0mzgyIjjqALcls2KjjWNR8LPN5xvbr4zzNPRzaG9pDZy_iEdeYFYOeOISgsze_BRmzu1RtXTuL3efEqXU7nAfZPSU2LaAK9Ff9qPC42kTstmhp7QRfSBmauqlAUwSJKOfbHcF8QPXPHTM08pakvME7E-91XNPqxznhb60y7_58DhTJEooIqqs_mhq94B3T-PbbL_bQT5vQ9mYnziHXqf4WvG4stIWyrVO3G47Sed90Vs2vZa8BHjqIor97MS_3nhDzds'
                     `https://ui-avatars.com/api/?name=${encodeURIComponent(
                       e?.first_name == "---" ? "??" : e?.first_name
-                    )}&background=4F46E5&color=fff&size=120`
+                    )}&background=8A2BE2&color=fff&size=120`
                   }
                 />
                 <div className="flex-1">
@@ -91,7 +91,7 @@ export default function Page() {
 
           <button
             onClick={() => setPage(prev => prev + 1)}
-            className="px-2 py-1 bg-indigo-600 text-white rounded"
+            className="px-2 py-1 bg-[#8A2BE2] text-white rounded"
           >
             Next
           </button>

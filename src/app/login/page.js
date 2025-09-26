@@ -107,7 +107,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-12 font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-lg shadow-md transition duration-300"
+            className="w-full h-12 font-bold bg-[#8A2BE2] hover:bg-indigo-700 text-white rounded-xl text-lg shadow-md transition duration-300"
           >
             {isSubmitting ? "Logging in..." : "Log in"}
           </Button>

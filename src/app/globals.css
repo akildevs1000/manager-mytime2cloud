@@ -48,7 +48,7 @@
 body {
   font-family: 'Inter', sans-serif;
   min-height: max(884px, 100dvh);
-  background: #f6f7f8 !important;
+  /* background: red; */
 }
 
 .material-symbols-outlined {
@@ -136,6 +136,6 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    /* @apply bg-background text-foreground; */
   }
 }
