@@ -49,7 +49,7 @@ export default function LiveEmployeeLogs() {
 
             <div>
                 {logs.map((log, index) => (
-                    <div key={index} className="bg-white dark:bg-card-dark rounded-lg p-4 space-y-4">
+                    <div key={index} className="bg-white dark:bg-card-dark rounded-lg p-4 mb-2 space-y-4">
                         <div className="flex items-center space-x-3">
                             <img
                                 alt={log?.employee?.full_name}

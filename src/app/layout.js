@@ -49,47 +49,27 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-
       <head>
-        {/* Favicon */}
-        {/* <link rel="icon" href="/favicon.ico" sizes="any" /> */}
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-
-        {/* Manifest for PWA (Android and others) */}
         <link rel="manifest" href="/manifest.json" />
 
-        {/* -------------------- PWA for iOS -------------------- */}
-
-        {/* iOS splash screen and home screen icon */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Your App Name" />
 
-        {/* Status bar color */}
-        <meta name="theme-color" content="#8A2BE2" />           {/* Android */}
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /> {/* iOS */}
+        <meta name="theme-color" content="#8A2BE2" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-        {/* Apple Touch Icon - used for "Add to Home Screen" */}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-        {/* You can also specify different icon sizes for different devices */}
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-        {/* Optional: Splash screen images for different devices */}
-        {/* You'll need to generate these images based on specific screen sizes. */}
-        {/* <link href="/apple-splash-1125-2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" /> */}
-
-        {/* -------------------------------------------------- */}
-
-        {/* ...other head content like font links */}
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable}`}>
-        {/* Purple top bar for iOS status bar */}
         <div className="fixed top-0 left-0 w-full h-[env(safe-area-inset-top)] bg-[#8A2BE2] z-50"></div>
 
         <AuthProvider>
