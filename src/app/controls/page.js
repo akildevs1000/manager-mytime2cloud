@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -271,7 +272,10 @@ export default function Page() {
         <DialogContent className={`sm:max-w-[400px] backdrop-blur-md transition-all`}>
 
           <DialogHeader>
-            <DialogTitle className="text-lg text-gray-600 font-bold">Enter Four Digit Pin</DialogTitle>
+            <DialogTitle className="text-lg text-gray-600 font-bold">Open the Door</DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+              Please enter the 4-digit pin to open the door.
+            </DialogDescription>
           </DialogHeader>
 
           <div className={`py-4 flex justify-center ${shake ? "animate-shake" : ""}`}>
