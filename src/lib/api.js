@@ -71,6 +71,26 @@ export const getDeviceList = async (company_id = 0, branch_id = 0) => {
   return data;
 };
 
+// companyId will be passed dynamically
+export const openDoor = async (device_id = 0) => {
+  const { data } = await axios.get(`${API_BASE}/open_door`, {
+    params: {
+      device_id: device_id,
+    },
+  });
+  return data;
+};
+
+// companyId will be passed dynamically
+export const closeDoor = async (device_id = 0) => {
+  const { data } = await axios.get(`${API_BASE}/close_door`, {
+    params: {
+      device_id: device_id,
+    },
+  });
+  return data;
+};
+
 
 // companyId will be passed dynamically
 export const getAttendanceReports = async (payload = {}) => {

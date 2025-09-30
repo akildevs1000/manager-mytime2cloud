@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 
-import { getBranches, getDeviceList } from "@/lib/api";
+import { getBranches, getDeviceList, openDoor, closeDoor } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useCompany } from "@/context/CompanyContext";
 import { useAuth } from "@/context/AuthContext";
@@ -97,6 +97,14 @@ export default function Page() {
       setIsLogsLoading(false); // End loading
     }
   };
+
+  const handleOpenDoorCommand = async (device_id) => {
+    await openDoor(device_id);
+  }
+
+  const handleCloseDoorCommand = async (device_id) => {
+    await closeDoor(device_id);
+  }
 
   useEffect(() => {
     fetchLogs();
@@ -199,11 +207,11 @@ export default function Page() {
                 </div>
                 <div className="flex gap-2">
                   {/* Open Door Icon */}
-                  <button className="h-10 w-10 pt-1 rounded-full bg-green-100 hover:bg-green-200">
+                  <button onClick={() => handleOpenDoorCommand(device.device_id)} className="h-10 w-10 pt-1 rounded-full bg-green-100 hover:bg-green-200">
                     <span className="material-icons text-green-600">lock_open</span>
                   </button>
                   {/* Close Door Icon */}
-                  <button className="h-10 w-10 pt-1 rounded-full bg-red-100 hover:bg-red-200">
+                  <button onClick={() => handleCloseDoorCommand(device.device_id)} className="h-10 w-10 pt-1 rounded-full bg-red-100 hover:bg-red-200">
                     <span className="material-icons text-red-600">lock</span>
                   </button>
                 </div>
