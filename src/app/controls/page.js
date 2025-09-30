@@ -267,15 +267,14 @@ export default function Page() {
         </div>
 
       </section>
-
       <Dialog open={showOtpBox} onOpenChange={setShowOtpBox}>
-        <DialogContent className={`sm:max-w-[400px] backdrop-blur-md transition-all ${shake ? "animate-shake" : ""
-          }`}>
+        <DialogContent className={`sm:max-w-[400px] backdrop-blur-md transition-all`}>
+
           <DialogHeader>
             <DialogTitle className="text-lg text-gray-600 font-bold">Enter Four Digit Pin</DialogTitle>
           </DialogHeader>
 
-          <div className={`py-4 flex justify-center`}>
+          <div className={`py-4 flex justify-center ${shake ? "animate-shake" : ""}`}>
             <InputOTP maxLength={4} value={otp} onChange={setOtp}>
               <InputOTPGroup className="flex gap-4">
                 {[0, 1, 2, 3].map((i) => (
@@ -288,8 +287,6 @@ export default function Page() {
               </InputOTPGroup>
             </InputOTP>
           </div>
-
-
           <DialogFooter className="flex justify-end gap-2">
             <Button
               onClick={handleOtpSubmit}
