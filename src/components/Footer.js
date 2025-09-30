@@ -8,7 +8,7 @@ export default function Footer() {
 
     const isActive = (href) => pathname === href;
 
-    if(pathname == "/login") return;
+    if (pathname == "/login") return;
 
     return (
         <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-2">
@@ -46,6 +46,15 @@ export default function Footer() {
             >
                 <span className="material-icons">people</span>
                 <span className="text-xs">Employees</span>
+            </Link>
+
+            <Link
+                href="/controls"
+                className={`flex flex-col items-center ${isActive("/controls") ? "text-indigo-600" : "text-gray-500"
+                    }`}
+            >
+                <span className="material-icons">meeting_room</span>
+                <span className="text-xs">Controls</span>
             </Link>
         </footer>
     );
