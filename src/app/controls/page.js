@@ -136,30 +136,34 @@ export default function Page() {
   }
 
   const handleOtpSubmit = async () => {
-    if (otp === "0000") {
-      try {
-        let res = await openDoor(selectedDevice);
-        console.log("🚀 ~ handleOtpSubmit ~ res:", res)
 
-        setAnimationData(true);
-
-        setTimeout(() => {
-          setShowOtpBox(false);
-          setAnimationData(false);
-          setSelectedDevice(null);
-          setOtp("");
-        }, 5000); // hide animation
-
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
+    if (otp !== "0000") {
       // restart shake animation without touching dialog state
       setShake(false);
       requestAnimationFrame(() => setShake(true));
       setOtp(""); // optional: clear invalid OTP
+      return;
     }
-  };
+
+
+    try {
+      let res = await openDoor(selectedDevice);
+
+      if (!res?.status) return;
+
+      setAnimationData(true);
+
+      setTimeout(() => {
+        setShowOtpBox(false);
+        setAnimationData(false);
+        setSelectedDevice(null);
+        setOtp("");
+      }, 5000); // hide animation
+
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   const handleCloseDoorCommand = async (device_id, isActive) => {
     if (!isActive) return;
@@ -320,7 +324,7 @@ export default function Page() {
             <DialogHeader>
               <DialogTitle className="text-lg text-gray-600 font-bold">Door Open</DialogTitle>
               <DialogDescription className="text-sm text-gray-500">
-                Your door is openning
+                Your door is opnened
               </DialogDescription>
             </DialogHeader>
 
