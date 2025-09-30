@@ -33,9 +33,6 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 
-import { useRouter } from "next/navigation";
-
-
 import { getBranches, getDeviceList, openDoor, closeDoor, checkPin } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useCompany } from "@/context/CompanyContext";
@@ -60,14 +57,6 @@ export default function Page() {
   const [selectedDevice, setSelectedDevice] = useState(null);
 
   const { user, loading } = useAuth();
-  const router = useRouter();
-
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
-    }
-  }, [user, loading, router]);
 
 
   // Fetch companyId from local storage with a delay
