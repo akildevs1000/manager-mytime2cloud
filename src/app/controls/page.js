@@ -41,7 +41,12 @@ import { useEffect, useState } from "react";
 import { useCompany } from "@/context/CompanyContext";
 import { useAuth } from "@/context/AuthContext";
 
+
+import doorAnimation from "../../../public/animations/door-open.json";
+import Lottie from "lottie-react";
 export default function Page() {
+
+  const [animationData, setAnimationData] = useState(null);
 
   const [shake, setShake] = useState(false);
 
@@ -124,32 +129,40 @@ export default function Page() {
     }
   };
 
-  const handleOpenDoorCommand = async (device_id) => {
+  const handleOpenDoorCommand = async (device_id, isActive) => {
+    if (!isActive) return;
     setSelectedDevice(device_id);
-    setShowOtpBox(true); // show OTP input
+    setShowOtpBox(true);
   }
 
   const handleOtpSubmit = async () => {
     if (otp === "0000") {
       try {
-        await openDoor(selectedDevice);
+        let res = await openDoor(selectedDevice);
+        console.log("🚀 ~ handleOtpSubmit ~ res:", res)
+
+        setAnimationData(true);
+
+        setTimeout(() => {
+          setShowOtpBox(false);
+          setAnimationData(false);
+          setSelectedDevice(null);
+          setOtp("");
+        }, 3000); // hide animation
+
       } catch (err) {
         console.log(err);
-      } finally {
-        setOtp("");
-        setShowOtpBox(false); // close ONLY when correct
-        setSelectedDevice(null);
       }
     } else {
       // restart shake animation without touching dialog state
       setShake(false);
       requestAnimationFrame(() => setShake(true));
+      setOtp(""); // optional: clear invalid OTP
     }
   };
 
-
-
-  const handleCloseDoorCommand = async (device_id) => {
+  const handleCloseDoorCommand = async (device_id, isActive) => {
+    if (!isActive) return;
     await closeDoor(device_id);
   }
 
@@ -254,11 +267,11 @@ export default function Page() {
                 </div>
                 <div className="flex gap-2">
                   {/* Open Door Icon */}
-                  <button onClick={() => handleOpenDoorCommand(device.device_id)} className="h-10 w-10 pt-1 rounded-full bg-green-100 hover:bg-green-200">
+                  <button onClick={() => handleOpenDoorCommand(device.device_id, isActive)} className="h-10 w-10 pt-1 rounded-full bg-green-100 hover:bg-green-200">
                     <span className="material-icons text-green-600">lock_open</span>
                   </button>
                   {/* Close Door Icon */}
-                  <button onClick={() => handleCloseDoorCommand(device.device_id)} className="h-10 w-10 pt-1 rounded-full bg-red-100 hover:bg-red-200">
+                  <button onClick={() => handleCloseDoorCommand(device.device_id, isActive)} className="h-10 w-10 pt-1 rounded-full bg-red-100 hover:bg-red-200">
                     <span className="material-icons text-red-600">lock</span>
                   </button>
                 </div>
@@ -269,37 +282,55 @@ export default function Page() {
 
       </section>
       <Dialog open={showOtpBox} onOpenChange={setShowOtpBox}>
-        <DialogContent className={`sm:max-w-[400px] backdrop-blur-md transition-all`}>
+        {!animationData ? (
+          <DialogContent className={`sm:max-w-[400px] backdrop-blur-md transition-all`}>
 
-          <DialogHeader>
-            <DialogTitle className="text-lg text-gray-600 font-bold">Open the Door</DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
-              Please enter the 4-digit pin to open the door.
-            </DialogDescription>
-          </DialogHeader>
+            <DialogHeader>
+              <DialogTitle className="text-lg text-gray-600 font-bold">Open the Door</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500">
+                Please enter the 4-digit pin to open the door.
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className={`py-4 flex justify-center ${shake ? "animate-shake" : ""}`}>
-            <InputOTP maxLength={4} value={otp} onChange={setOtp}>
-              <InputOTPGroup className="flex gap-4">
-                {[0, 1, 2, 3].map((i) => (
-                  <InputOTPSlot
-                    key={i}
-                    index={i}
-                    className="h-14 w-14 !rounded-full !border-2 border-gray-300 text-2xl font-mono flex items-center justify-center focus:!border-green-500 focus:!ring-2 focus:!ring-green-200 transition-all"
-                  />
-                ))}
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
-          <DialogFooter className="flex justify-end gap-2">
-            <Button
-              onClick={handleOtpSubmit}
-              className="bg-[#8A2BE2] text-white"
-            >
-              Submit
-            </Button>
-          </DialogFooter>
-        </DialogContent>
+            <div className={`py-4 flex justify-center ${shake ? "animate-shake" : ""}`}>
+
+              <InputOTP maxLength={4} value={otp} onChange={setOtp}>
+                <InputOTPGroup className="flex gap-4">
+                  {[0, 1, 2, 3].map((i) => (
+                    <InputOTPSlot
+                      key={i}
+                      index={i}
+                      className="h-14 w-14 !rounded-full !border-2 border-gray-300 text-2xl font-mono flex items-center justify-center focus:!border-green-500 focus:!ring-2 focus:!ring-green-200 transition-all"
+                    />
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+            <DialogFooter className="flex justify-end gap-2">
+              <Button
+                onClick={handleOtpSubmit}
+                className="bg-[#8A2BE2] text-white"
+              >
+                Submit
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        ) :
+          <DialogContent className={`sm:max-w-[400px] backdrop-blur-md transition-all`}>
+            <DialogHeader>
+              <DialogTitle className="text-lg text-gray-600 font-bold">Door Open</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500">
+                Your door is openning
+              </DialogDescription>
+            </DialogHeader>
+
+            {animationData && (
+              <div className={`py-4 flex justify-center`}>
+                <Lottie animationData={doorAnimation} loop={false} className="w-48 h-48" />
+              </div>
+            )}
+          </DialogContent>
+        }
       </Dialog>
     </>
   );
