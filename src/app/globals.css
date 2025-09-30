@@ -46,7 +46,7 @@
   --sidebar-ring: oklch(0.707 0.022 261.325);
 }
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   min-height: max(884px, 100dvh);
   /* background: red; */
 }
@@ -138,4 +138,27 @@ body {
   body {
     /* @apply bg-background text-foreground; */
   }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-8px);
+  }
+  40% {
+    transform: translateX(8px);
+  }
+  60% {
+    transform: translateX(-6px);
+  }
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease;
 }

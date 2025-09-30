@@ -1,5 +1,23 @@
 "use client";
 
+
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
+
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+
 import {
   Popover,
   PopoverContent,
@@ -24,9 +42,16 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function Page() {
 
+  const [shake, setShake] = useState(false);
+
   const [isLogsLoading, setIsLogsLoading] = useState(false);
 
   const { companyId, setCompanyId } = useCompany();
+
+
+  const [otp, setOtp] = useState("");
+  const [showOtpBox, setShowOtpBox] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -99,8 +124,29 @@ export default function Page() {
   };
 
   const handleOpenDoorCommand = async (device_id) => {
-    await openDoor(device_id);
+    setSelectedDevice(device_id);
+    setShowOtpBox(true); // show OTP input
   }
+
+  const handleOtpSubmit = async () => {
+    if (otp === "0000") {
+      try {
+        await openDoor(selectedDevice);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setOtp("");
+        setShowOtpBox(false); // close ONLY when correct
+        setSelectedDevice(null);
+      }
+    } else {
+      // restart shake animation without touching dialog state
+      setShake(false);
+      requestAnimationFrame(() => setShake(true));
+    }
+  };
+
+
 
   const handleCloseDoorCommand = async (device_id) => {
     await closeDoor(device_id);
@@ -221,6 +267,39 @@ export default function Page() {
         </div>
 
       </section>
+
+      <Dialog open={showOtpBox} onOpenChange={setShowOtpBox}>
+        <DialogContent className={`sm:max-w-[400px] backdrop-blur-md transition-all ${shake ? "animate-shake" : ""
+          }`}>
+          <DialogHeader>
+            <DialogTitle className="text-lg text-gray-600 font-bold">Enter Four Digit Pin</DialogTitle>
+          </DialogHeader>
+
+          <div className={`py-4 flex justify-center`}>
+            <InputOTP maxLength={4} value={otp} onChange={setOtp}>
+              <InputOTPGroup className="flex gap-4">
+                {[0, 1, 2, 3].map((i) => (
+                  <InputOTPSlot
+                    key={i}
+                    index={i}
+                    className="h-14 w-14 !rounded-full !border-2 border-gray-300 text-2xl font-mono flex items-center justify-center focus:!border-green-500 focus:!ring-2 focus:!ring-green-200 transition-all"
+                  />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+
+
+          <DialogFooter className="flex justify-end gap-2">
+            <Button
+              onClick={handleOtpSubmit}
+              className="bg-[#8A2BE2] text-white"
+            >
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
