@@ -253,7 +253,7 @@ export default function Page() {
 
         <button
           onClick={() => setPage(prev => prev + 1)}
-          className="px-2 py-1 bg-indigo-600 text-white rounded"
+          className="px-2 py-1 bg-[#8A2BE2] text-white rounded"
         >
           Next
         </button>

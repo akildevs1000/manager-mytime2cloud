@@ -14,18 +14,83 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
 
+import { useStatus } from "@/context/StatusContext";
+const formatDate = (date) => date.toISOString().split("T")[0];
+
+
+
+
 export default function AttendanceReports() {
   const { companyId } = useCompany();
+  const { statusId } = useStatus();
+
 
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [open, setOpen] = useState(false);
+  const [openStatus, setStatusOpen] = useState(false);
+
   const [branches, setBranches] = useState([]);
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+  const [fromDate, setFromDate] = useState(formatDate(new Date()));
+  const [toDate, setToDate] = useState(formatDate(new Date()));
   const [fromDatePopoverOpen, setFromDatePopoverOpen] = useState(false);
   const [toDatePopoverOpen, setToDatePopoverOpen] = useState(false);
   const [employeeAttendance, setEmployeeAttendance] = useState([]); // State to hold attendance data
   const [isLoading, setIsLoading] = useState(false); // State for loading status
+
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [statuslist, setSatusList] = useState([
+    {
+      name: `All Status`,
+      id: `-1`,
+    },
+    {
+      name: `Present`,
+      id: `P`,
+    },
+    {
+      name: `Absent`,
+      id: `A`,
+    },
+    {
+      name: `Missing`,
+      id: `M`,
+    },
+    {
+      name: `Late In`,
+      id: `LC`,
+    },
+    {
+      name: `Early Out`,
+      id: `EG`,
+    },
+    {
+      name: `Off`,
+      id: `O`,
+    },
+    {
+      name: `Leave`,
+      id: `L`,
+    },
+    {
+      name: `Holiday`,
+      id: `H`,
+    },
+    {
+      name: `Vaccation`,
+      id: `V`,
+    },
+    {
+      name: `Manual Entry`,
+      id: `ME`,
+    },
+  ]);
+
+
+  useEffect(() => {
+    if (statusId !== null) {
+      setSelectedStatus(statusId)
+    }
+  }, [statusId]);
 
   // Fetch branches
   useEffect(() => {
@@ -59,6 +124,12 @@ export default function AttendanceReports() {
     const selectedBranchItem = branches.find((b) => b.name.toLowerCase() === currentValue.toLowerCase());
     setSelectedBranch(selectedBranchItem ? selectedBranchItem.id : null);
     setOpen(false);
+  };
+
+  const handleSelectStatus = (currentValue) => {
+    const selectedItem = statuslist.find((b) => b.name.toLowerCase() === currentValue.toLowerCase());
+    setSelectedStatus(selectedItem ? selectedItem.id : null);
+    setStatusOpen(false);
   };
 
   const handleGenerateReport = async () => {
@@ -95,7 +166,7 @@ export default function AttendanceReports() {
         //   72,
         //   68
         // ],
-        // "statuses": [],
+        "statuses": [selectedStatus],
         "branch_id": selectedBranch,
         // "daily_date": "2025-09-23",
         "showTabs": "{\"single\":true,\"dual\":false,\"multi\":false}",
@@ -108,6 +179,7 @@ export default function AttendanceReports() {
 
       //   // API call to fetch attendance data with filters
       const data = await getAttendanceReports(payload);
+      console.log("🚀 ~ handleGenerateReport ~ payload:", payload)
       console.log("🚀 ~ handleGenerateReport ~ data:", data)
 
       setEmployeeAttendance(data.data);
@@ -118,6 +190,13 @@ export default function AttendanceReports() {
     }
   };
 
+  // Fetch branches
+  useEffect(() => {
+    handleGenerateReport();
+  }, [selectedStatus]);
+
+
+
   if (!companyId) {
     return <div className="text-center">Unauthenticated</div>;
   }
@@ -127,6 +206,41 @@ export default function AttendanceReports() {
       {/* <h2 className="text-2xl font-bold">Attendance Reports</h2> */}
       <div className="my-3 flex flex-col md:flex-row gap-3">
         {/* Branch Popover */}
+        <div className="w-full md:w-1/3">
+          <Popover open={openStatus} onOpenChange={setStatusOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={openStatus}
+                className="w-full justify-between py-5 text-gray-500"
+              >
+                {selectedStatus
+                  ? statuslist.find((b) => b.id === selectedStatus)?.name
+                  : "Select Status"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[320px] p-0">
+              <Command>
+                <CommandInput placeholder="Search branch..." />
+                <CommandEmpty>No status found.</CommandEmpty>
+                <CommandGroup>
+                  {statuslist.map((status) => (
+                    <CommandItem
+                      className="text-gray-500"
+                      key={status.id}
+                      value={status.name}
+                      onSelect={handleSelectStatus}
+                    >
+                      {status.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+
         <div className="w-full md:w-1/3">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -244,7 +358,7 @@ export default function AttendanceReports() {
             employeeAttendance.map((emp, index) => (
               <div
                 key={index}
-                className="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow"
+                className="bg-white p-4 rounded-lg"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center">

@@ -2,6 +2,7 @@
 
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
+import { StatusProvider } from "@/context/StatusContext";
 import { CompanyProvider } from "@/context/CompanyContext";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -76,7 +77,9 @@ export default function RootLayout({ children }) {
           <div className="min-h-screen flex flex-col p-4 font-sans">
             <Header />
             <div className="mt-18">
-              <CompanyProvider>{children}</CompanyProvider>
+              <CompanyProvider>
+                <StatusProvider>{children}</StatusProvider>
+              </CompanyProvider>
             </div>
           </div>
           <Footer />
