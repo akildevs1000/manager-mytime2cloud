@@ -93,6 +93,18 @@ export const closeDoor = async (device_id = 0) => {
 
 
 // companyId will be passed dynamically
+export const checkPin = async (company_id = 0, pin = "0000") => {
+  const { data } = await axios.get(`${API_BASE}/check-pin`, {
+    params: {
+      company_id: company_id,
+      pin: pin,
+    },
+  });
+  return data;
+};
+
+
+// companyId will be passed dynamically
 export const getAttendanceReports = async (payload = {}) => {
   const { data } = await axios.post(`${API_BASE}/attendance-report-new`, payload);
   return data;

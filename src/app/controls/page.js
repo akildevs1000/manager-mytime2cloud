@@ -36,7 +36,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 
-import { getBranches, getDeviceList, openDoor, closeDoor } from "@/lib/api";
+import { getBranches, getDeviceList, openDoor, closeDoor, checkPin } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useCompany } from "@/context/CompanyContext";
 import { useAuth } from "@/context/AuthContext";
@@ -137,8 +137,9 @@ export default function Page() {
 
   const handleOtpSubmit = async () => {
 
-    if (otp !== "0000") {
-      // restart shake animation without touching dialog state
+    let { status } = await checkPin(companyId, otp);
+
+    if (!status) {
       setShake(false);
       requestAnimationFrame(() => setShake(true));
       setOtp(""); // optional: clear invalid OTP
