@@ -8,8 +8,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin@vgroup-intl.ae");
-  const [password, setPassword] = useState("AkiL@332211");
+  const [email, setEmail] = useState("demo@gmail.com");
+  const [password, setPassword] = useState("demo");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

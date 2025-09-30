@@ -148,7 +148,7 @@ export default function Page() {
           setAnimationData(false);
           setSelectedDevice(null);
           setOtp("");
-        }, 3000); // hide animation
+        }, 5000); // hide animation
 
       } catch (err) {
         console.log(err);
@@ -325,7 +325,7 @@ export default function Page() {
             </DialogHeader>
 
             {animationData && (
-              <div className={`py-4 flex justify-center`}>
+              <div className={`flex justify-center`}>
                 <Lottie animationData={doorAnimation} loop={false} className="w-48 h-48" />
               </div>
             )}
