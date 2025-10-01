@@ -103,6 +103,17 @@ export const checkPin = async (company_id = 0, pin = "0000") => {
   return data;
 };
 
+// companyId will be passed dynamically
+export const getLastTenLogs = async (company_id = 0, UserID = "0") => {
+  const { data } = await axios.get(`${API_BASE}/get_last_ten_attendance_logs`, {
+    params: {
+      company_id: company_id,
+      UserID: UserID,
+    },
+  });
+  return data;
+};
+
 
 // companyId will be passed dynamically
 export const getAttendanceReports = async (payload = {}) => {

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 
 
-import { getBranches, getAttendnaceCount, getLogs } from "@/lib/api";
+import { getBranches, getAttendnaceCount, getLogs, getLastTenLogs } from "@/lib/api";
 import { Suspense, useEffect, useState } from "react";
 import StatsGrid from "@/components/StatsGrid";
 import { useCompany } from "@/context/CompanyContext";
@@ -27,10 +27,45 @@ export default function Page() {
 
   const [isLogsLoading, setIsLogsLoading] = useState(false);
 
+  const [branches, setBranches] = useState([]);
+  const [stats, setStats] = useState({
+    employeeCount: 0,
+    presentCount: 0,
+    absentCount: 0,
+    leaveCount: 0,
+    vaccationCount: 0,
+  });
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [childLogs, setChildLogs] = useState([]);
+  const [page, setPage] = useState(1);
+
   const { companyId, setCompanyId } = useCompany();
 
   const { user, loading } = useAuth();
   const router = useRouter();
+
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleAccordion = async (index, UserID) => {
+
+    setOpenIndex(openIndex === index ? null : index);
+
+    let isOpenned = openIndex !== index;
+
+    if (isOpenned && selectedIndex !== index) {
+      setSelectedIndex(index);
+      try {
+        const data = await getLastTenLogs(companyId, UserID);
+        console.log("🚀 ~ toggleAccordion ~ data:", data)
+        setChildLogs(data)
+      } catch (error) {
+        console.error("Error fetching branches:", error);
+      }
+    }
+  };
 
 
   useEffect(() => {
@@ -53,18 +88,7 @@ export default function Page() {
     return () => clearTimeout(timer); // Cleanup function to prevent memory leaks
   }, []);
 
-  const [branches, setBranches] = useState([]);
-  const [stats, setStats] = useState({
-    employeeCount: 0,
-    presentCount: 0,
-    absentCount: 0,
-    leaveCount: 0,
-    vaccationCount: 0,
-  });
-  const [selectedBranch, setSelectedBranch] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [logs, setLogs] = useState([]);
-  const [page, setPage] = useState(1);
+
 
   // Fetch branches
   useEffect(() => {
@@ -208,35 +232,88 @@ export default function Page() {
           </button>
         </div>
         <div className="space-y-3">
-          {logs.map((log, index) => (
-            <div key={index}
-              className="flex items-center gap-4 p-3 bg-white dark:bg-card-dark rounded-lg"
-            >
-              <img
-                alt="Liam Johnson"
-                className="h-12 w-12 rounded-full object-cover"
-                src={
-                  log?.employee?.profile_picture ||
-                  // 'https://lh3.googleusercontent.com/aida-public/AB6AXuBaC2gcwDY0mzgyIjjqALcls2KjjWNR8LPN5xvbr4zzNPRzaG9pDZy_iEdeYFYOeOISgsze_BRmzu1RtXTuL3efEqXU7nAfZPSU2LaAK9Ff9qPC42kTstmhp7QRfSBmauqlAUwSJKOfbHcF8QPXPHTM08pakvME7E-91XNPqxznhb60y7_58DhTJEooIqqs_mhq94B3T-PbbL_bQT5vQ9mYnziHXqf4WvG4stIWyrVO3G47Sed90Vs2vZa8BHjqIor97MS_3nhDzds'
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    log?.employee?.first_name == "---" ? "??" : log?.employee?.first_name
-                  )}&background=8A2BE2&color=fff&size=120`
-                }
-              />
-              <div className="flex-1">
-                <p className="font-semibold">{log?.employee?.first_name}</p>
-                <p className="text-sm text-gray-500">
-                  Checked {log.log_type == null ? "---" : log.log_type}
-                </p>
+          {logs.map((log, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <div
+                key={index}
+                className="bg-white dark:bg-card-dark rounded-xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden transition"
+              >
+                {/* Header row */}
+                <div
+                  onClick={() => toggleAccordion(index, log?.UserID)}
+                  className="flex items-center gap-4 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  {/* Profile */}
+                  <img
+                    alt={log?.employee?.first_name}
+                    className="h-12 w-12 rounded-full object-cover border"
+                    src={
+                      log?.employee?.profile_picture ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        log?.employee?.first_name == "---"
+                          ? "??"
+                          : log?.employee?.first_name
+                      )}&background=8A2BE2&color=fff&size=120`
+                    }
+                  />
+
+                  {/* Main info */}
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">
+                      {log?.employee?.first_name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Checked {log?.log_type?.name ?? log?.log_type ?? "---"}
+                    </p>
+                  </div>
+
+                  {/* Time & arrow */}
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <p className="text-green-600 font-medium text-sm">{log.time}</p>
+                      <p className="text-xs text-gray-500">{log.date}</p>
+                    </div>
+                    <span
+                      className={`material-icons text-gray-400 transform transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
+                        }`}
+                    >
+                      expand_more
+                    </span>
+                  </div>
+                </div>
+
+                {/* Expandable content */}
+                <div
+                  className={`transition-all duration-500 ease-in-out ${isOpen ? "opacity-100 p-4" : "max-h-0 opacity-0 p-0"
+                    } overflow-hidden text-sm text-gray-600 dark:text-gray-300 bg-white space-y-2`}
+                >
+                  {childLogs.map((log, index) => (
+                    <div key={index} className="border-t dark:bg-card-dark rounded-lg p-4 mb-2 space-y-4">
+                      <div className="flex justify-between items-center pt-2 border-border-light dark:border-border-dark">
+                        <div className="text-sm">
+                          <p className="text-gray-500">Date Time</p>
+                          <p className="text-green-600 text-sm text-gray-500">{log.date} {log.time}</p>
+                        </div>
+                        <div className="text-sm text-center">
+                          <p className="text-gray-500">In/Out</p>
+                          <span className={log.log_type === "Out" ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
+                            {log.log_type == null ? "---" : log.log_type}
+                          </span>
+                        </div>
+                        <div className="text-sm text-right">
+                          <p className="text-gray-500">Device</p>
+                          <p className="text-sm text-gray-500">{log.device?.short_name}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                </div>
+
               </div>
-              <div className="text-right">
-                <p className="text-green-600 font-medium text-sm">{log.time}</p>
-                <p className="text-xs text-gray-500">
-                  {log.date}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
