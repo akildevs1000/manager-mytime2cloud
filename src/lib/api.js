@@ -42,8 +42,15 @@ export const getTodayLogsCount = async (company_id = 0, branch_id = null, depart
 };
 
 // companyId will be passed dynamically
-export const getEmployees = async (company_id = 0, page = 1, per_page = 10) => {
-  const { data } = await axios.get(`${API_BASE}/employeev1?company_id=${company_id}&per_page=${per_page}&page=${page}`);
+export const getEmployees = async (company_id = 0, page = 1, branch_id = null) => {
+  const { data } = await axios.get(`${API_BASE}/employeev1`, {
+    params: {
+      company_id: company_id,
+      per_page: 10,
+      page: page,
+      branch_id: branch_id,
+    },
+  });
   return data;
 };
 
